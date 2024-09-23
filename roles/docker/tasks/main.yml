@@ -1,0 +1,31 @@
+- name: Install latest version of Docker
+  apt:
+    name: docker.io
+    state: latest
+
+- name: Install Docker Compose plugin
+  become: yes
+  block:
+    - name: Create Docker CLI plugins directory
+      file:
+        path: /usr/local/lib/docker/cli-plugins
+        state: directory
+        mode: '0755'
+
+    - name: Get latest Docker Compose release version
+      uri:
+        url: https://api.github.com/repos/docker/compose/releases/latest
+        return_content: yes
+      register: compose_latest_release
+
+    - name: Set Docker Compose version
+      set_fact:
+        compose_version: '{{ compose_latest_release.json.tag_name }}'
+
+    - name: Download Docker Compose plugin
+      get_url:
+        url:
+          'https://github.com/docker/compose/releases/download/{{
+          compose_version }}/docker-compose-linux-x86_64'
+        dest: '/usr/local/lib/docker/cli-plugins/docker-compose'
+        mode: '0755'

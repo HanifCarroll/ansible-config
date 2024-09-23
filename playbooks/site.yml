@@ -1,0 +1,2 @@
+---
+- import_playbook: deploy_nomad_weather.yml

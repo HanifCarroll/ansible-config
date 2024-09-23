@@ -1,0 +1,32 @@
+---
+- name: Create application directory
+  file:
+    path: '{{ dest_dir }}'
+    state: directory
+
+- name: Copy Docker Compose file
+  copy:
+    src: '{{ source_dir }}/docker-compose.prod.yml'
+    dest: '{{ dest_dir }}/docker-compose.yml'
+
+- name: Copy Dockerfile
+  copy:
+    src: '{{ source_dir }}/Dockerfile'
+    dest: '{{ dest_dir }}/Dockerfile'
+
+- name: Copy application files
+  synchronize:
+    src: "{{ local_app_dir }}/"
+    dest: "{{ dest_dir }}"
+    delete: yes
+    rsync_opts:
+      - '--exclude=node_modules'
+      - '--exclude=.git'
+      - '--exclude=.gitignore'
+  delegate_to: localhost
+
+- name: Rebuild and start Docker Compose services
+  command:
+    cmd: docker compose -f {{ dest_dir }}/docker-compose.yml up -d --build
+  args:
+    chdir: "{{ dest_dir }}"

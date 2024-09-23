@@ -1,0 +1,16 @@
+---
+- name: Deploy Nomad Weather to VPS
+  hosts: hetzner
+  become: no
+  vars:
+    app_name: nomad_weather
+    app_dir: "/opt/{{ app_name }}"
+    local_app_dir: "/Users/hanifcarroll/projects/nomad-weather/server"
+
+  roles:
+    - common
+    - docker
+    - role: deploy_app
+      vars:
+        source_dir: "{{ local_app_dir }}"
+        dest_dir: "{{ app_dir }}"
