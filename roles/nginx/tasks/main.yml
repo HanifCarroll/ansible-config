@@ -1,0 +1,31 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: yes
+
+- name: Create Nginx configuration directory
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copy Nginx main configuration
+  copy:
+    src: nginx.conf
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create app configuration without SSL
+  template:
+    src: nomad_weather.conf.j2
+    dest: /etc/nginx/conf.d/nomad_weather.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Reload Nginx

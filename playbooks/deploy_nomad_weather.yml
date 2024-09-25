@@ -10,6 +10,7 @@
   roles:
     - common
     - docker
+    - nginx
     - role: deploy_app
       vars:
         source_dir: "{{ local_app_dir }}"

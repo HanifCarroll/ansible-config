@@ -4,14 +4,6 @@
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Install prerequisites
-  apt:
-    name:
-      - curl
-      - ca-certificates
-      - gnupg
-    state: present
-
 - name: Add PostgreSQL repository key
   apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
@@ -27,10 +19,12 @@
   apt:
     update_cache: yes
 
-- name: Install basic packages and PostgreSQL client
+- name: Install all required packages
   apt:
     name:
       - curl
+      - ca-certificates
+      - gnupg
       - git
       - vim
       - postgresql-client

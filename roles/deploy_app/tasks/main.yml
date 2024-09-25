@@ -4,20 +4,18 @@
     path: '{{ dest_dir }}'
     state: directory
 
-- name: Copy Docker Compose file
+- name: Copy Docker files
   copy:
-    src: '{{ source_dir }}/docker-compose.prod.yml'
-    dest: '{{ dest_dir }}/docker-compose.yml'
-
-- name: Copy Dockerfile
-  copy:
-    src: '{{ source_dir }}/Dockerfile'
-    dest: '{{ dest_dir }}/Dockerfile'
+    src: "{{ source_dir }}/{{ item.src }}"
+    dest: "{{ dest_dir }}/{{ item.dest }}"
+  with_items:
+    - { src: 'docker-compose.prod.yml', dest: 'docker-compose.yml' }
+    - { src: 'Dockerfile', dest: 'Dockerfile' }
 
 - name: Copy application files
   synchronize:
-    src: "{{ local_app_dir }}/"
-    dest: "{{ dest_dir }}"
+    src: '{{ local_app_dir }}/'
+    dest: '{{ dest_dir }}'
     delete: yes
     rsync_opts:
       - '--exclude=node_modules'
@@ -29,4 +27,4 @@
   command:
     cmd: docker compose -f {{ dest_dir }}/docker-compose.yml up -d --build
   args:
-    chdir: "{{ dest_dir }}"
+    chdir: '{{ dest_dir }}'
